@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Online Store</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Online Store</h1>
+   <nav>
+    <a href="/">Home</a>
+    <a href="{{ url_for('add_product') }}">Add Product</a>
+    <a href="{{ url_for('view_orders') }}">View Orders</a>  <!-- New link to view orders -->
+</nav>
+
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

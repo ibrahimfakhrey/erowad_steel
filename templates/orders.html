@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Orders</h2>
+<table>
+    <tr>
+        <th>Order ID</th>
+        <th>Product</th>
+        <th>Customer Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Order Date</th>
+        <th>Shipped</th>  <!-- New column for shipping status -->
+        <th>Action</th>    <!-- New column for action buttons -->
+    </tr>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.product.name }}</td>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.customer_email }}</td>
+        <td>{{ order.customer_phone }}</td>
+        <td>{{ order.customer_address }}</td>
+        <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        <td>{{ 'Yes' if order.shipped else 'No' }}</td>  <!-- Display shipment status -->
+        <td>
+            <form method="POST" action="{{ url_for('toggle_shipment', order_id=order.id) }}">
+                <button type="submit">
+                    {{ 'Mark as Unshipped' if order.shipped else 'Mark as Shipped' }}
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
