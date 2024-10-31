@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        #card-element {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        #card-errors {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Checkout</h1>
+    {% if current_user %}
+        <p>Hello, {{ current_user.name }}</p>
+    {% else %}
+        <p>Please log in to proceed.</p>
+    {% endif %}
+
+    <form id="payment-form">
+        <div id="card-element"><!-- A Stripe Element will be inserted here. --></div>
+        <button type="submit">Pay</button>
+        <div id="card-errors" role="alert"></div>
+    </form>
+
+    <script>
+        const stripe = Stripe('pk_test_51QFtNmDEJNdb2MEJIPCCCUwrAvUmP3SWNebYwTpLYppK5r0QNk3FZV60OF6GYarxzcrhRCgU9j00fAD1zOjjCpJL00LnmGVkOl');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const { paymentIntent, error } = await stripe.confirmCardPayment('{{ client_secret }}', {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: '{{ current_user.name }}'
+                    }
+                }
+            });
+
+            if (error) {
+                // Display error.message in your UI
+                document.getElementById('card-errors').textContent = error.message;
+            } else {
+                // Payment succeeded, redirect to success page
+                window.location.href = '{{ url_for("checkout_success") }}';
+            }
+        });
+    </script>
+</body>
+</html>
